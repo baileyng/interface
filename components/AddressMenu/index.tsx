@@ -54,12 +54,33 @@ type AddressMenuProp = {
 function AddressMenu({ infoLayout, dropdownBtn, connectBtn }: AddressMenuProp) {
     const loggedIn = useRecoilValue(accIsLoggedInState);
     const address = useRecoilValue(accAddressState);
+    const dappCore = useRecoilValue(dappCoreState);
+    const accInfo = useRecoilValue(accInfoState);
     const logoutDapp = logout;
     const [mShowMenu, setMShowMenu] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
     const mounted = useMounted();
     const { isMobile } = useScreenSize();
     const connectWallet = useConnectWallet();
+    useEffect(() => {
+        // console.log("loggedIn", loggedIn);
+        // console.log("address", address);
+        // console.log("isMobile", isMobile);
+        console.log("dappCore", dappCore);           //Use this
+        // console.log("accInfo", accInfo);
+        if (window && loggedIn) {
+            let dataLayer = (window as any).dataLayer || [];
+            console.log("dataLayer",dataLayer);
+            dataLayer.push({
+                'event': 'connectWallet',
+                'address': dappCore.account.address,
+                'method': dappCore.loginInfo.loginMethod
+            })
+            
+        }
+        
+        
+    }, [loggedIn, dappCore.account.address, dappCore.loginInfo.loginMethod]);       //Everytime any of these changes, the logic above will run
     const setIsOpenConnectWalletModal = useSetRecoilState(
         walletIsOpenConnectModalState
     );
